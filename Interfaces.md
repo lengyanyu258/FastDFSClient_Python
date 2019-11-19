@@ -73,7 +73,7 @@ r = fdfs.init('/etc/fdfs/client.conf', log_fd=pipe_w)
 f = open(pipe_r, 'rt')
 #os.dup2(pipe_w, sys.stderr.fileno())
 
-r = fdfs.download_file('group1', 'M00/00/00/abcdefghijklmnopqrstuvwxyz1234.jpg')
+r = fdfs.download_file('group1/M00/00/00/abcdefghijklmnopqrstuvwxyz1234.jpg')
 if r[0] != 0:
     logs = f.readlines()
     print(logs)
@@ -96,23 +96,23 @@ f.close()	# pipe_r is closed also.
 
 ## 03. `upload_file(bytes, str)`
 
-|        | `upload_file`                |              |                             |
-| ------ | ---------------------------- | ------------ | --------------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
-|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
+|        | `upload_file`              |              |                                       |
+| ------ | -------------------------- | ------------ | ------------------------------------- |
+| IN     | file_buff                  | `bytes`      | 上传文件的二进制内容                  |
+|        | file_ext_name              | `str`        | 上传文件的扩展名，长度`≤6`，不包含`.` |
+| RETURN | (response, remote_file_id) | `(int, str)` | `0`为成功，否则失败                   |
 
 上传**普通类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ5678.png')`。
 
 ## 04. `upload_slave(bytes, str, str, str)`
 
-|        | `upload_slave`               |              |                           |
-| ------ | ---------------------------- | ------------ | ------------------------- |
-| IN     | file_buff                    | `bytes`      | 从文件的二进制内容        |
-|        | master_file_id               | `str`        | 主文件的文件名            |
-|        | prefix_name                  | `str`        | 从文件的前缀名            |
-|        | file_ext_name                | `str`        | 从文件的扩展名，不包含`.` |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败       |
+|        | `upload_slave`             |              |                                     |
+| ------ | -------------------------- | ------------ | ----------------------------------- |
+| IN     | file_buff                  | `bytes`      | 从文件的二进制内容                  |
+|        | master_file_id             | `str`        | 主文件的文件名                      |
+|        | prefix_name                | `str`        | 从文件的前缀名，长度`≤16`           |
+|        | file_ext_name              | `str`        | 从文件的扩展名，长度`≤6`，不包含`.` |
+| RETURN | (response, remote_file_id) | `(int, str)` | `0`为成功，否则失败                 |
 
 上传主从文件中的**从文件**。
 
@@ -122,11 +122,11 @@ f.close()	# pipe_r is closed also.
 
 ## 05. `upload_appender(bytes, str)`
 
-|        | `upload_appender`            |              |                             |
-| ------ | ---------------------------- | ------------ | --------------------------- |
-| IN     | file_buff                    | `bytes`      | 上传文件的二进制内容        |
-|        | file_ext_name                | `str`        | 上传文件的扩展名，不包含`.` |
-| RETURN | (response, remote_file_name) | `(int, str)` | `0`为成功，否则失败         |
+|        | `upload_appender`          |              |                                       |
+| ------ | -------------------------- | ------------ | ------------------------------------- |
+| IN     | file_buff                  | `bytes`      | 上传文件的二进制内容                  |
+|        | file_ext_name              | `str`        | 上传文件的扩展名，长度`≤6`，不包含`.` |
+| RETURN | (response, remote_file_id) | `(int, str)` | `0`为成功，否则失败                   |
 
 上传**追加类型**的文件，返回一个元组对象：`(0, 'group1/M00/00/00/ABCDEFGHIJKLMNOPQRSTUVWXYZ7890.png')`。
 

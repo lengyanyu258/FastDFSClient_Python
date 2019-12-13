@@ -149,7 +149,7 @@ int CFDFSClient::upload_file(const char *file_buff, const int64_t file_size,
 
     if ((result = tracker_query_storage_store(pTrackerServer, &storageServer,
             group_name, &store_path_index)) != 0) {
-        tracker_close_connection_ex(pTrackerServer, true);
+        tracker_close_connection(pTrackerServer);
 
         logError("CFDFSClient::upload_file() tracker_query_storage_store fail,"
                 " error no: %d, error info: %s", result, STRERROR(result));
@@ -174,7 +174,7 @@ int CFDFSClient::upload_file(const char *file_buff, const int64_t file_size,
         remote_file_id = m_pRemoteFileName;
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -217,7 +217,7 @@ int CFDFSClient::upload_slave(const char *file_buff, const int64_t file_size,
         remote_file_id = m_pRemoteFileName;
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -242,7 +242,7 @@ int CFDFSClient::upload_appender(const char *file_buff, const int64_t file_size,
 
     if ((result = tracker_query_storage_store(pTrackerServer, &storageServer,
             group_name, &store_path_index)) != 0) {
-        tracker_close_connection_ex(pTrackerServer, true);
+        tracker_close_connection(pTrackerServer);
 
         logError("CFDFSClient::upload_appender() tracker_query_storage_store"
                 " fail, error no: %d, error info: %s", result, STRERROR(result));
@@ -267,7 +267,7 @@ int CFDFSClient::upload_appender(const char *file_buff, const int64_t file_size,
         remote_file_id = m_pRemoteFileName;
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -291,7 +291,7 @@ int CFDFSClient::append_file(const char *file_buff, const int64_t file_size,
                 appender_file_id, result, STRERROR(result));
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -323,7 +323,7 @@ int CFDFSClient::download_file(const char *remote_file_id, BufferInfo *pBuff) {
         free(file_buff);
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -348,7 +348,7 @@ int CFDFSClient::delete_file(const char *remote_file_id) {
         result = FSC_ERROR_CODE_DELETE_FILE_FAIL;
     }
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     return result;
 }
@@ -364,23 +364,41 @@ int CFDFSClient::get_file_info(const char *remote_file_id, BufferInfo *file_info
         return result;
     }
 
-    //    tracker_close_all_connections();
-
     json_map_t info_value;
     char error_info[BUFF_SIZE];
+    const char *file_type_str;
 
-    init_json_map(&info_value, 5);
+    init_json_map(&info_value, 7);
 
-    assign_json_map(info_value.elements[0], "create_timestamp", "%s",
+    switch (info.file_type) {
+        case FDFS_FILE_TYPE_NORMAL:
+            file_type_str = "normal";
+            break;
+        case FDFS_FILE_TYPE_SLAVE:
+            file_type_str = "slave";
+            break;
+        case FDFS_FILE_TYPE_APPENDER:
+            file_type_str = "appender";
+            break;
+        default:
+            file_type_str = "unkown";
+            break;
+    }
+
+    assign_json_map(info_value.elements[0], "file_type",
+            "%s", file_type_str);
+    assign_json_map(info_value.elements[1], "get_from_server",
+            "%s", info.get_from_server ? "true" : "false");
+    assign_json_map(info_value.elements[2], "create_timestamp", "%s",
             formatDatetime(info.create_timestamp,
             "%Y-%m-%d %H:%M:%S", NULL, BUFF_SIZE));
-    assign_json_map(info_value.elements[1], "crc32",
+    assign_json_map(info_value.elements[3], "crc32",
             "%u", info.crc32);
-    assign_json_map(info_value.elements[2], "source_id",
+    assign_json_map(info_value.elements[4], "source_id",
             "%d", info.source_id);
-    assign_json_map(info_value.elements[3], "file_size",
+    assign_json_map(info_value.elements[5], "file_size",
             "%" PRId64, info.file_size);
-    assign_json_map(info_value.elements[4], "source_ip_addr",
+    assign_json_map(info_value.elements[6], "source_ip_addr",
             "%s", info.source_ip_addr);
 
     string_t output;
@@ -422,7 +440,7 @@ int CFDFSClient::list_groups(BufferInfo *groups_info) {
     result = tracker_list_groups(pTrackerServer,
             group_stats, FDFS_MAX_GROUPS, &group_count);
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     if (result != 0) {
         logError("CFDFSClient::list_groups() tracker_list_groups fail,"
@@ -514,7 +532,7 @@ int CFDFSClient::list_one_group(const char *group_name, BufferInfo *group_info) 
 
     result = tracker_list_one_group(pTrackerServer, group_name, &group_stat);
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     if (result != 0) {
         logError("CFDFSClient::list_one_group() tracker_list_one_group fail,"
@@ -595,7 +613,7 @@ int CFDFSClient::list_servers(const char *group_name, const char *storage_id,
     result = tracker_list_servers(pTrackerServer, group_name, storage_id,
             storage_infos, FDFS_MAX_SERVERS_EACH_GROUP, &storage_count);
 
-    tracker_close_connection_ex(pTrackerServer, true);
+    tracker_close_connection(pTrackerServer);
 
     if (result != 0) {
         logError("CFDFSClient::list_servers() tracker_list_servers fail,"

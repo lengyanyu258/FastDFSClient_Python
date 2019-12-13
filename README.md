@@ -1,6 +1,6 @@
 # FastDFS Client for Python
 
-Server 版本：**6.01**
+Server 版本：**6.04**
 
 ### How to Compile
 
@@ -15,8 +15,8 @@ Server 版本：**6.01**
 一种可能的编译步骤：
 
 ```bash
-readonly LIBFASTCOMMON_VERSION=1.0.41
-readonly FASTDFS_VERSION=6.01
+readonly LIBFASTCOMMON_VERSION=1.0.42
+readonly FASTDFS_VERSION=6.04
 
 readonly LIBFASTCOMMON_DIR_NAME="libfastcommon-${LIBFASTCOMMON_VERSION}"
 readonly FASTDFS_DIR_NAME="fastdfs-${FASTDFS_VERSION}"
@@ -55,44 +55,5 @@ sudo make install
 
 ### Revision History
 
-* 2019.10.31 ver 4.1.0
-  * 适配了`fastdfs 6.01`版本
-  * 升级了Python接口，无需将`file_id`分解为`group_name`和`file_name`。
+[HISTORY](./HISTORY)
 
-- 2019.9.18 ver 3.1.0
-  - 增加了`get_file_info`接口
-
-- 2019.7.20 ver 3.0.1
-  - 修复了拼写错误：`destory`→`destroy`
-
-- 2019.7.19 ver 3.0.0
-  - 移除了对`jsoncpp`的依赖
-  - 更新了`list_groups`、`list_one_group`和`list_servers`方法。
-
-- 2019.7.3 ver 2.2.2
-  - 完善了错误日志输出信息
-
-- 2019.7.1 ver 2.2.1
-  - 兼容了`Python 2.7`
-
-- 2019.6.28 ver 2.2.0
-  - 增加了`upload_appender`接口
-  - 增加了`append_file`接口
-  - 修改了其他接口名，如`slave_upload`接口修改为`upload_slave`
-
-- 2019.6.27 ver 2.1.0
-  - 升级了`fdfs_init`方法，支持日志输出和关键字可选传参
-
-- 2019.6.14 ver 2.0.0
-  - 移除了对`Python 2`的支持
-  - 移除了对`jsoncpp`自行编译的依赖
-  - 完善了对`Python 3.6`的编译依赖
-
-- 2018.3.18 ver 1.2.0
-  - 增加了对`python3.6`的支持
-
-- 2015.4.13 ver 1.1.0
-  - 增加了`slave_upload`接口
-
-- 2015.2.28 ver 1.0.0
-  - 初始版本

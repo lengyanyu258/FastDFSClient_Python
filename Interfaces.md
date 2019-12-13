@@ -175,10 +175,7 @@ f.close()	# pipe_r is closed also.
 
 获取文件信息。
 
-注意：
-
-1. `remote_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
-2. 对于`appender`类型文件来说，其获取的`crc32`值不准确。
+注意：`remote_file_id`形如`group1/M00/00/00/abcdefghijklmnopqrstuvwxyz5678.jpg`。
 
 ## 10. `list_groups()`
 

@@ -631,7 +631,7 @@ int CFDFSClient::list_servers(const char *group_name, const char *storage_id,
 
     for (int n = 0; n < storage_count; ++n) {
         assign_json_map(info.elements[0], "if_trunk_server",
-                "%d", storage_infos[n].if_trunk_server);
+                "%s", storage_infos[n].if_trunk_server ? "true" : "false");
         assign_json_map(info.elements[1], "status",
                 "%s", get_storage_status_caption(storage_infos[n].status));
         assign_json_map(info.elements[2], "id",
